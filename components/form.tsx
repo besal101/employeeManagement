@@ -5,7 +5,13 @@ import UpdateUserForm from "./updateUserForm";
 type Props = {};
 
 const form = (props: Props) => {
-  return <AddUserForm />;
+  const flag = false;
+
+  return (
+    <div className="container mx-auto py-5">
+      {flag ? <AddUserForm /> : <UpdateUserForm />}
+    </div>
+  );
 };
 
 export default form;

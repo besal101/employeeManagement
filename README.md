@@ -10,6 +10,8 @@ npm run dev
 yarn dev
 ```
 
+Learning From [https://www.youtube.com/watch?v=8SU5VAtc-\_8&list=RDCMUCrG2Z0usOCCdUTAr4D1A8mw&index=7](https://www.youtube.com/watch?v=8SU5VAtc-_8&list=RDCMUCrG2Z0usOCCdUTAr4D1A8mw&index=7) Completed Chapter 7
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
