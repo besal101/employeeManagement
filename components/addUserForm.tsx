@@ -3,29 +3,62 @@ import { useReducer } from "react";
 import { BiPlus } from "react-icons/bi";
 import Error from "./Error";
 import Success from "./success";
+import { useQueryClient, useMutation } from "react-query";
+import { createUser, getUsers } from "../utils/helper";
+import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { toggleChange, getFormState } from "../redux/reducer";
 
-interface FormProps {}
+interface FormProps {
+  name: string;
+  email: string;
+  salary: number;
+  date: string;
+  status: string;
+  avatar: string;
+}
 
-const formReducer = (state: any, event: any) => {
-  return {
-    ...state,
-    [event.target.name]: event.target.value,
-  };
-};
+const AddUserForm = ({
+  formData,
+  setFormData,
+}: {
+  formData: any;
+  setFormData: any;
+}) => {
+  const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
 
-const AddUserForm = (props: FormProps) => {
-  const [formData, setFormData] = useReducer(formReducer, {});
+  const addMutation = useMutation<FormProps, Error>(createUser, {
+    onSuccess: (data) => {
+      queryClient.prefetchQuery("user", getUsers);
+    },
+  });
+
   const handleSubmit = (event: any) => {
     event.preventDefault();
     if (Object.keys(formData).length === 0) return console.log("No data");
-    console.log(formData);
+    let { firstname, lastname, email, salary, date, status } = formData;
+    const model = {
+      name: `${firstname} ${lastname}`,
+      avatar: `https://randomuser.me/api/portraits/men/${Math.floor(
+        Math.random() * 10
+      )}.jpg`,
+      email,
+      salary,
+      date,
+      status: status === "Active" ? "Active" : "InActive",
+    };
+    addMutation.mutate(model as any);
   };
 
-  if (Object.keys(formData).length > 0)
-    return <Success message="Form data submitted successfully" />;
+  if (addMutation.isLoading) return <div>Loading</div>;
+
+  if (addMutation.isError) return <Error message={addMutation.error.message} />;
+
+  if (addMutation.isSuccess)
+    return <Success message="User added successfully" />;
 
   return (
-    <form className="grid lg:grid-cols-2 w-4/6 gap-4">
+    <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={handleSubmit}>
       <div className="input-type">
         <input
           type="text"
@@ -106,7 +139,7 @@ const AddUserForm = (props: FormProps) => {
       </div>
       <button
         className="flex justify-center text-md w-2/6 bg-green-500 text-white px-4 py-2 border rounded-md hover:bg-gray-50 hover:border-green-500 hover:text-green-500"
-        onClick={handleSubmit}
+        type="submit"
       >
         Add <BiPlus className="ml-1" size="23" />
       </button>
